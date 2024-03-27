@@ -2,11 +2,12 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const CreateAccount = ({user}) => {
+const CreateAccount = ({}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isCreator, setIsCreator] = useState(false);
+  let userID = 0;
   const navigate = useNavigate();
 
   const handleCreateAccount = (e) => {
@@ -31,9 +32,10 @@ const CreateAccount = ({user}) => {
       console.log(res);
       if (res.data.message === 'User created') {
         // onCreateAccount();
-        user.username = username;
-        user.isCreator = isCreator;
-        navigate('/account');
+        // user.username = username;
+        // user.isCreator = isCreator;
+        userID = res.data.ID;
+        navigate('/account', {state: {ID: userID, username: username, isCreator: isCreator}});
       }
       else {
         alert('Error creating user');

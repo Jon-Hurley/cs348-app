@@ -15,35 +15,37 @@ function createSchema() {
     // Connect to the database
     const createTablesQueries = [
         `CREATE TABLE IF NOT EXISTS User (
-        Username VARCHAR(50) PRIMARY KEY,
+        ID INT PRIMARY KEY AUTO_INCREMENT,
+        Username VARCHAR(50),
         Password VARCHAR(100),
         IsCreator BOOLEAN
         );`,
         `CREATE TABLE IF NOT EXISTS Product (
         ID INT PRIMARY KEY AUTO_INCREMENT,
-        CreatorUsername VARCHAR(50),
+        CreatorID INT,
+        Name VARCHAR(50),
         Description TEXT,
         Price DECIMAL(10, 2),
         Image VARCHAR(100),
-        FOREIGN KEY (CreatorUsername) REFERENCES User(Username)
+        FOREIGN KEY (CreatorID) REFERENCES User(ID)
         );`,
         `CREATE TABLE IF NOT EXISTS Review (
         ID INT PRIMARY KEY AUTO_INCREMENT,
         ProductID INT,
-        Username VARCHAR(50),
+        UserID INT,
         Rating INT,
         Description TEXT,
         FOREIGN KEY (ProductID) REFERENCES Product(ID),
-        FOREIGN KEY (Username) REFERENCES User(Username)
+        FOREIGN KEY (UserID) REFERENCES User(ID)
         );`,
         `CREATE TABLE IF NOT EXISTS Orders (
         ID INT PRIMARY KEY AUTO_INCREMENT,
         ProductID INT,
-        CreatorUsername VARCHAR(50),
+        CreatorID INT,
         OrderDate DATE,
         TrackingNumber VARCHAR(50),
         FOREIGN KEY (ProductID) REFERENCES Product(ID),
-        FOREIGN KEY (CreatorUsername) REFERENCES User(Username)
+        FOREIGN KEY (CreatorID) REFERENCES User(ID)
         );`
     ];
     connection.connect((err) => {

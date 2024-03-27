@@ -72,7 +72,8 @@ import Login from './components/login.js';
 import CreateAccount from './components/create_account.js';
 import AccountPage from './components/account_page.js';
 import ProductsPage from './components/shop.js';
-import PublishProductPage from './components/my_products.js';
+import PublishProductPage from './components/publish_product.js';
+import MyProductsPage from './components/my_products.js';
 
 let user = {
   username: '',
@@ -85,10 +86,11 @@ const App = () => {
       <Routes>
         <Route path="/" element={<LandingPage/>} />
         <Route path="login" element={<Login user={user}/>} />
-        <Route path="create-account" element={<CreateAccount user={user}/>} />
-        <Route path="account" element={<AccountPage user={user}/>} />
+        <Route path="create-account" element={<CreateAccount/>} />
+        <Route path="account" element={<AccountPage/>} />
         <Route path="shop" element={<ProductsPage/>} />
-        <Route path="publish" element={<PublishProductPage/>} />
+        <Route path="publish-product" element={<PublishProductPage/>} />
+        <Route path="my-products" element={<MyProductsPage/>} />
         {/* <Route path="product/:id" element={<ProductPage/>} /> */}
         <Route path="*" element={<h1>Page not found</h1>} />
       </Routes>

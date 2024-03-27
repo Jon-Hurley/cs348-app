@@ -1,11 +1,12 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Login = ({user}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -19,9 +20,12 @@ const Login = ({user}) => {
     }).then((res) => {
       console.log(res);
       if (res.data.message === 'Logged in') {
+        console.log('res.data', res.data);
         user.username = username;
         user.isCreator = res.data.isCreator;
-        navigate('/account');
+        console.log('isCreator:', res.data.isCreator);
+        console.log('User ID:', res.data.ID);
+        navigate('/account' , {state: {ID: res.data.ID, username: username, isCreator: res.data.isCreator}});
      }
       else {
         alert('Invalid username or password');

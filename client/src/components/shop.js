@@ -1,64 +1,55 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const ProductsPage = () => {
-  // Sample products data
-  const [products, setProducts] = useState([
-    { id: 1, name: 'Product 1', type: 'Type A', price: 10, creator: 'Creator 1' },
-    { id: 2, name: 'Product 2', type: 'Type B', price: 20, creator: 'Creator 2' },
-    // Add more products as needed
-  ]);
+  // State to track the current page
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { userID, products } = location.state;
+  console.log('Products:', products);
+  const [currentPage, setCurrentPage] = useState(1);
+  // State to track the number of products per page
+  const productsPerPage = 5;
 
-  // Filters state
-  const [filters, setFilters] = useState({
-    productType: '',
-    price: '',
-    creator: ''
-  });
+  // Calculate the total number of pages
+  const totalPages = Math.ceil(products.length / productsPerPage);
 
-  // Handle filter changes
-  const handleFilterChange = (event) => {
-    const { name, value } = event.target;
-    setFilters({ ...filters, [name]: value });
+  // Function to handle page change
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
-  // Filter products based on current filters
-  const filteredProducts = products.filter(product => {
-    return (
-      (!filters.productType || product.type === filters.productType) &&
-      (!filters.price || product.price <= parseInt(filters.price)) &&
-      (!filters.creator || product.creator === filters.creator)
-    );
-  });
+  // Get the products for the current page
+  const currentProducts = products.slice(
+    (currentPage - 1) * productsPerPage,
+    currentPage * productsPerPage
+  );
+
+  console.log('Current products:', currentProducts);
 
   return (
-    <div className="product-page">
-      <div className="filters">
-        <label>
-          Product Type:
-          <select name="productType" value={filters.productType} onChange={handleFilterChange}>
-            <option value="">All</option>
-            <option value="Type A">Type A</option>
-            <option value="Type B">Type B</option>
-            {/* Add more options for product types */}
-          </select>
-        </label>
-        <label>
-          Price:
-          <input type="number" name="price" value={filters.price} onChange={handleFilterChange} />
-        </label>
-        <label>
-          Creator:
-          <input type="text" name="creator" value={filters.creator} onChange={handleFilterChange} />
-        </label>
-      </div>
-      <div className="products">
-        {filteredProducts.map(product => (
-          <div key={product.id} className="product">
-            <h3>{product.name}</h3>
-            <p>Type: {product.type}</p>
-            <p>Price: ${product.price}</p>
-            <p>Creator: {product.creator}</p>
+    <div className="products-page">
+      <h2>Products on Trade Trove</h2>
+      <div className="product-list">
+        {currentProducts.map((product, index) => (
+          <div key={index} className="product">
+            <h3>{product.Name}</h3>
+            <p>Description: {product.Description}</p>
+            <p>Price: ${product.Price}</p>
+            <img src={product.Image} alt={product.name} />
           </div>
+        ))}
+      </div>
+      {/* Pagination */}
+      <div className="pagination">
+        {Array.from({ length: totalPages }, (_, index) => (
+          <button
+            key={index}
+            onClick={() => handlePageChange(index + 1)}
+            className={currentPage === index + 1 ? 'active' : ''}
+          >
+            {index + 1}
+          </button>
         ))}
       </div>
     </div>

@@ -1,100 +1,59 @@
-import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-const PublishProductPage = () => {
-  const [productData, setProductData] = useState({
-    name: '',
-    description: '',
-    price: '',
-    image: null
-  });
+const MyProductsPage = () => {
+  // State to track the current page
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { userID, products } = location.state;
+  console.log('Products:', products);
+  const [currentPage, setCurrentPage] = useState(1);
+  // State to track the number of products per page
+  const productsPerPage = 5;
 
-  // Handle input changes
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setProductData({ ...productData, [name]: value });
+  // Calculate the total number of pages
+  const totalPages = Math.ceil(products.length / productsPerPage);
+
+  // Function to handle page change
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
-  // Handle file input change
-  const handleFileInputChange = (event) => {
-    const file = event.target.files[0];
-    setProductData({ ...productData, image: file });
-  };
+  // Get the products for the current page
+  const currentProducts = products.slice(
+    (currentPage - 1) * productsPerPage,
+    currentPage * productsPerPage
+  );
 
-  // Handle form submission
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // Here you can handle form submission, e.g., sending data to the server
-    console.log('Product Data:', productData);
-    axios.post('http://localhost:8080/publishProduct', productData)
-        .then((res) => {
-            console.log(res);
-            alert('Product published successfully');
-        })
-        .catch((err) => {
-            console.error(err);
-            alert('Error publishing product');
-        });
-    // Reset the form after submission
-    setProductData({
-      name: '',
-      description: '',
-      price: '',
-      image: null
-    });
-  };
+  console.log('Current products:', currentProducts);
 
   return (
-    <div className="publish-product-page">
-      <h2>Publish a New Product</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="name">Product Name:</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={productData.name}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="description">Description:</label>
-          <textarea
-            id="description"
-            name="description"
-            value={productData.description}
-            onChange={handleInputChange}
-            required
-          ></textarea>
-        </div>
-        <div className="form-group">
-          <label htmlFor="price">Price:</label>
-          <input
-            type="number"
-            id="price"
-            name="price"
-            value={productData.price}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="image">Image:</label>
-          <input
-            type="file"
-            id="image"
-            name="image"
-            accept="image/*"
-            onChange={handleFileInputChange}
-            required
-          />
-        </div>
-        <button type="submit">Publish</button>
-      </form>
+    <div className="products-page">
+      <h2>Products Created by You</h2>
+      <div className="product-list">
+        {currentProducts.map((product, index) => (
+          <div key={index} className="product">
+            <h3>{product.Name}</h3>
+            <p>Description: {product.Description}</p>
+            <p>Price: ${product.Price}</p>
+            <img src={product.Image} alt={product.name} />
+          </div>
+        ))}
+      </div>
+      {/* Pagination */}
+      <div className="pagination">
+        {Array.from({ length: totalPages }, (_, index) => (
+          <button
+            key={index}
+            onClick={() => handlePageChange(index + 1)}
+            className={currentPage === index + 1 ? 'active' : ''}
+          >
+            {index + 1}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };
 
-export default PublishProductPage;
+export default MyProductsPage;

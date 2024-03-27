@@ -1,5 +1,6 @@
 const createSchema = require('./create_schema.js');
 const handleUser = require('./user.js');
+const handleProduct = require('./product.js');
 const express = require('express');
 const app = express();
 const cors = require('cors');
@@ -33,9 +34,9 @@ app.use(cors());
 app.post('/login', jsonParser, async function (req, res) {
     const { username, password } = req.body;
     const results = await handleUser.login(username, sha256(password));
-    console.log('results', results);
+    console.log('results ID', results.ID);
     if (results) {
-        res.send({message: 'Logged in', username: username, isCreator: results.IsCreator});
+        res.send({message: 'Logged in', ID: results.ID, username: username, isCreator: results.IsCreator});
     }
     else {
         res.send('Invalid username or password');
@@ -47,10 +48,10 @@ app.post('/createUser', jsonParser, async function (req, res) {
     results = await handleUser.createUser(username, sha256(password), isCreator);
     console.log(results);
     if (results == 0) {
-        res.send({ message: 'Error creating user' });
+        res.send({ message: 'Error creating user'});
     }
     else {
-        res.send({  message: 'User created' });
+        res.send({ ID: results.ID, username: username, isCreator: isCreator});
     }
     
 });
@@ -84,8 +85,8 @@ app.post('/deleteUser', jsonParser, async function (req, res) {
 );
 
 app.post('/publishProduct', jsonParser, async function (req, res) {
-    const { username, name, description, price, image } = req.body;
-    results = await handleUser.publishProduct(username, name, description, price, image);
+    const { userID, name, description, price, image } = req.body;
+    results = await handleProduct.publishProduct(userID, name, description, price, image);
     console.log(results);
     if (results == 0) {
         res.send({ message: 'Error publishing product' });
@@ -95,6 +96,34 @@ app.post('/publishProduct', jsonParser, async function (req, res) {
     }
 
 });
+
+app.post('/getProductsByCreator', jsonParser, async function (req, res) {
+    const { userID } = req.body;
+    results = await handleProduct.getProductsByCreator(userID);
+    console.log(results);
+    if (results == 0) {
+        res.send({ message: 'Error getting products' });
+    }
+    else {
+        res.send(results);
+    }
+
+}
+);
+
+app.post('/getAllProducts', jsonParser, async function (req, res) {
+    const { userID } = req.body;
+    results = await handleProduct.getProducts();
+    console.log(results);
+    if (results == 0) {
+        res.send({ message: 'Error getting products' });
+    }
+    else {
+        res.send(results);
+    }
+
+}
+);
 
 
 

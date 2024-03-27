@@ -17,31 +17,48 @@ async function createUser(username, password, isCreator) {
         console.log('Connected to database');
     });
 
-    let good = 0;
+    let success = false;
 
-    const query = `INSERT INTO User (Username, Password, IsCreator) VALUES ('${username}', '${password}', ${isCreator})`;
-    try {
-        await new Promise((resolve, reject) => {
-            connection.query(query, (err, results) => {
-                if (err) {
-                    console.error('Error executing query:', err);
-                    reject(err);
-                } else {
-                    console.log('User created successfully');
-                    console.log(results);
-                    good = 1;
-                    resolve();
-                }
-            });
-        });
-    } catch (err) {
-        // Handle error
+    // Check if the username already exists
+    const checkQuery = `SELECT COUNT(*) AS count FROM User WHERE Username = ?`;
+    const [rows] = await connection.promise().query(checkQuery, [username]);
+
+    if (rows[0].count > 0) {
+        console.log('Username already exists');
+        connection.end();
+        return null;
     }
 
-    connection.end();
+    // If username doesn't exist, proceed with user creation
+    const insertQuery = `INSERT INTO User (Username, Password, IsCreator) VALUES (?, ?, ?)`;
+    try {
+        await connection.promise().query(insertQuery, [username, password, isCreator]);
+        console.log('User created successfully');
+        success = true;
+    } catch (error) {
+        console.error('Error executing query:', error);
+    } finally {
+        connection.end();
+    }
 
-    return good;
+    // get and return the new user
+
+    const query = `SELECT * FROM User WHERE Username = ?`;
+    const [results] = await connection.promise().query(query, [username], (err, results) => {
+        if (err) {
+            console.error('Error executing query:', err);
+            return null;
+        }
+        console.log('User created successfully');
+    });
+
+    console.log('results', results[0]);
+
+
+
+    return results[0];
 }
+
 
 async function login(username, password) {
     const connection = mysql.createConnection({
