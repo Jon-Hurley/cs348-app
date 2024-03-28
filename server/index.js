@@ -47,11 +47,11 @@ app.post('/createUser', jsonParser, async function (req, res) {
     const { username, password, isCreator } = req.body;
     results = await handleUser.createUser(username, sha256(password), isCreator);
     console.log(results);
-    if (results == 0) {
+    if (results == null) {
         res.send({ message: 'Error creating user'});
     }
     else {
-        res.send({ ID: results.ID, username: username, isCreator: isCreator});
+        res.send({ message: 'User created', ID: results.ID, username: username, isCreator: isCreator});
     }
     
 });
@@ -85,8 +85,8 @@ app.post('/deleteUser', jsonParser, async function (req, res) {
 );
 
 app.post('/publishProduct', jsonParser, async function (req, res) {
-    const { userID, name, description, price, image } = req.body;
-    results = await handleProduct.publishProduct(userID, name, description, price, image);
+    const { userID, name, description, price} = req.body;
+    results = await handleProduct.publishProduct(userID, name, description, price);
     console.log(results);
     if (results == 0) {
         res.send({ message: 'Error publishing product' });
@@ -101,12 +101,7 @@ app.post('/getProductsByCreator', jsonParser, async function (req, res) {
     const { userID } = req.body;
     results = await handleProduct.getProductsByCreator(userID);
     console.log(results);
-    if (results == 0) {
-        res.send({ message: 'Error getting products' });
-    }
-    else {
-        res.send(results);
-    }
+    res.send(results);
 
 }
 );
@@ -115,15 +110,23 @@ app.post('/getAllProducts', jsonParser, async function (req, res) {
     const { userID } = req.body;
     results = await handleProduct.getProducts();
     console.log(results);
-    if (results == 0) {
-        res.send({ message: 'Error getting products' });
-    }
-    else {
-        res.send(results);
-    }
+    res.send(results);
 
 }
 );
+
+app.post('/deleteProduct', jsonParser, async function (req, res) {
+    const { productID } = req.body;
+    results = await handleProduct.deleteProduct(productID);
+    console.log(results);
+    if (results == 0) {
+        res.send({ message: 'Error deleting product' });
+    }
+    else {
+        res.send({ message: 'Product deleted' });
+    }
+
+});
 
 
 

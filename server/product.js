@@ -19,11 +19,11 @@ async function publishProduct(userID, name, description, price, image) {
         console.log('Connected to database');
     });
 
-    const query = `INSERT INTO Product (CreatorID, Name, Description, Price, Image) VALUES (?, ?, ?, ?, ?);`;
+    const query = `INSERT INTO Product (CreatorID, Name, Description, Price) VALUES (?, ?, ?, ?);`;
 
     try {
         await new Promise((resolve, reject) => {
-            connection.query(query, [userID, name, description, price, image], (err, results) => {
+            connection.query(query, [userID, name, description, price], (err, results) => {
                 if (err) {
                     console.error('Error executing query:', err);
                     reject(err);
@@ -64,7 +64,7 @@ async function getProducts() {
     }
     );
 
-    const query = `SELECT * FROM Product`;
+    const query = `SELECT * FROM Product;`;
 
     try {
         const results = await new Promise((resolve, reject) => {

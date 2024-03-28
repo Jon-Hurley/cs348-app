@@ -26,7 +26,6 @@ function createSchema() {
         Name VARCHAR(50),
         Description TEXT,
         Price DECIMAL(10, 2),
-        Image VARCHAR(100),
         FOREIGN KEY (CreatorID) REFERENCES User(ID)
         );`,
         `CREATE TABLE IF NOT EXISTS Review (

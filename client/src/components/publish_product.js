@@ -3,20 +3,16 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const PublishProductPage = () => {
-
-    const navigate = useNavigate();
-    const location = useLocation();
-    const { userID,  isCreator } = location.state;
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { userID, isCreator } = location.state;
 
   const [productData, setProductData] = useState({
     userID: userID,
     name: '',
     description: '',
-    price: '',
-    image: null
+    price: ''
   });
-
-  
 
   // Handle input changes
   const handleInputChange = (event) => {
@@ -24,33 +20,25 @@ const PublishProductPage = () => {
     setProductData({ ...productData, [name]: value });
   };
 
-  // Handle file input change
-  const handleFileInputChange = (event) => {
-    const file = event.target.files[0];
-    setProductData({ ...productData, image: file });
-  };
-
   // Handle form submission
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Here you can handle form submission, e.g., sending data to the server
     console.log('Product Data:', productData);
     axios.post('http://localhost:8080/publishProduct', productData)
-        .then((res) => {
-            console.log(res);
-            alert('Product published successfully');
-        })
-        .catch((err) => {
-            console.error(err);
-            alert('Error publishing product');
-        });
+      .then((res) => {
+        console.log(res);
+        alert('Product published successfully');
+      })
+      .catch((err) => {
+        console.error(err);
+        alert('Error publishing product');
+      });
     // Reset the form after submission
     setProductData({
       userID: userID,
       name: '',
       description: '',
-      price: '',
-      image: null
+      price: ''
     });
   };
 
@@ -87,17 +75,6 @@ const PublishProductPage = () => {
             name="price"
             value={productData.price}
             onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="image">Image:</label>
-          <input
-            type="file"
-            id="image"
-            name="image"
-            accept="image/*"
-            onChange={handleFileInputChange}
             required
           />
         </div>

@@ -14,10 +14,6 @@ const ProductPage = ({ product, reviews }) => {
         <div>
           <strong>Description:</strong> {product.description}
         </div>
-        <div>
-          <strong>Image:</strong>{' '}
-          <img src={product.image || 'placeholder.jpg'} alt="Product" style={{ maxWidth: '200px' }} />
-        </div>
       </div>
       <div className="reviews">
         <h3>Reviews</h3>

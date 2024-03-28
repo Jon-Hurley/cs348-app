@@ -36,7 +36,6 @@ const ProductsPage = () => {
             <h3>{product.Name}</h3>
             <p>Description: {product.Description}</p>
             <p>Price: ${product.Price}</p>
-            <img src={product.Image} alt={product.name} />
           </div>
         ))}
       </div>

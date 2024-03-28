@@ -74,6 +74,7 @@ import AccountPage from './components/account_page.js';
 import ProductsPage from './components/shop.js';
 import PublishProductPage from './components/publish_product.js';
 import MyProductsPage from './components/my_products.js';
+import { AuthProvider } from './components/auth_context.js';
 
 let user = {
   username: '',

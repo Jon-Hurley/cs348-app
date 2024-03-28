@@ -35,28 +35,22 @@ async function createUser(username, password, isCreator) {
         await connection.promise().query(insertQuery, [username, password, isCreator]);
         console.log('User created successfully');
         success = true;
+        const query = `SELECT * FROM User WHERE Username = ?`;
+        const [results] = await connection.promise().query(query, [username], (err, results) => {
+        if (err) {
+            console.error('Error executing query:', err);
+            return null;
+        }
+    });
+
+    console.log('results', results[0]);
+    connection.end();
+    return results[0];
     } catch (error) {
         console.error('Error executing query:', error);
     } finally {
         connection.end();
     }
-
-    // get and return the new user
-
-    const query = `SELECT * FROM User WHERE Username = ?`;
-    const [results] = await connection.promise().query(query, [username], (err, results) => {
-        if (err) {
-            console.error('Error executing query:', err);
-            return null;
-        }
-        console.log('User created successfully');
-    });
-
-    console.log('results', results[0]);
-
-
-
-    return results[0];
 }
 
 

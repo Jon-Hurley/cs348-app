@@ -1,59 +1,89 @@
+import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const MyProductsPage = () => {
-  // State to track the current page
   const navigate = useNavigate();
   const location = useLocation();
-  const { userID, products } = location.state;
-  console.log('Products:', products);
+  const { userID, products } = location.state || { products: [] }; // Default to empty array if no products are passed
   const [currentPage, setCurrentPage] = useState(1);
-  // State to track the number of products per page
   const productsPerPage = 5;
 
-  // Calculate the total number of pages
   const totalPages = Math.ceil(products.length / productsPerPage);
 
-  // Function to handle page change
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
-  // Get the products for the current page
-  const currentProducts = products.slice(
-    (currentPage - 1) * productsPerPage,
-    currentPage * productsPerPage
-  );
-
-  console.log('Current products:', currentProducts);
-
-  return (
-    <div className="products-page">
-      <h2>Products Created by You</h2>
-      <div className="product-list">
-        {currentProducts.map((product, index) => (
-          <div key={index} className="product">
-            <h3>{product.Name}</h3>
-            <p>Description: {product.Description}</p>
-            <p>Price: ${product.Price}</p>
-            <img src={product.Image} alt={product.name} />
-          </div>
-        ))}
+  const handleDeleteProduct = (productId) => {
+    // Handle the deletion of the product with the given productId
+    // You can use axios to send a delete request to your backend API
+    console.log('Deleting product with ID:', productId);
+    // Update the products list after deletion
+    // For example, you can refetch the products from the server or remove the product from the state
+    axios.post('http://localhost:8080/deleteProduct', {
+        ID: productId
+    }).then((res) => {
+        console.log(res);
+        if (res.data.message === 'Product deleted') {
+            alert('Product deleted successfully');
+            navigate('/my-products', { state: { userID: userID } });
+        }
+        else {
+            alert('Error deleting product');
+        }
+        }
+    );
+  };
+  
+  if (!products) {
+    console.log('No products');
+    return (
+      <div className="products-page">
+        <h2>Products Created by You</h2>
+        <p>No products to display.</p>
       </div>
-      {/* Pagination */}
-      <div className="pagination">
-        {Array.from({ length: totalPages }, (_, index) => (
-          <button
-            key={index}
-            onClick={() => handlePageChange(index + 1)}
-            className={currentPage === index + 1 ? 'active' : ''}
-          >
-            {index + 1}
-          </button>
-        ))}
+    );
+  } else {
+    console.log('Products in front:', products);
+    const currentProducts = products.slice(
+      (currentPage - 1) * productsPerPage,
+      currentPage * productsPerPage
+    );
+
+    return (
+      <div className="products-page">
+        <h2>Products Created by You</h2>
+        {products.length === 0 ? (
+          <p>No products to display.</p>
+        ) : (
+          <>
+            <div className="product-list">
+              {currentProducts.map((product, index) => (
+                <div key={index} className="product">
+                  <h3>{product.Name}</h3>
+                  <p>Description: {product.Description}</p>
+                  <p>Price: ${product.Price}</p>
+                  <button onClick={() => handleDeleteProduct(product.ID)}>Delete</button>
+                </div>
+              ))}
+            </div>
+            <div className="pagination">
+              {Array.from({ length: totalPages }, (_, index) => (
+                <button
+                  key={index}
+                  onClick={() => handlePageChange(index + 1)}
+                  className={currentPage === index + 1 ? 'active' : ''}
+                >
+                  {index + 1}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
       </div>
-    </div>
-  );
+    );
+  }
 };
 
 export default MyProductsPage;
