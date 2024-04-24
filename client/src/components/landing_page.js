@@ -4,7 +4,7 @@ const LandingPage = () => {
   return (
     <div className="landing-page">
       <header>
-        <h1>Welcome to Trade Trove</h1>
+        <h1>Welcome to Purdue Picks</h1>
         <p>Discover amazing products created by talented individuals</p>
       </header>
       <section className="features">

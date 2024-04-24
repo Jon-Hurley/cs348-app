@@ -41,10 +41,11 @@ function createSchema() {
         ID INT PRIMARY KEY AUTO_INCREMENT,
         ProductID INT,
         CreatorID INT,
+        BuyerID INT,
         OrderDate DATE,
-        TrackingNumber VARCHAR(50),
         FOREIGN KEY (ProductID) REFERENCES Product(ID),
-        FOREIGN KEY (CreatorID) REFERENCES User(ID)
+        FOREIGN KEY (CreatorID) REFERENCES User(ID),
+        FOREIGN KEY (BuyerID) REFERENCES User(ID)
         );`
     ];
     connection.connect((err) => {

@@ -1,6 +1,8 @@
 const createSchema = require('./create_schema.js');
 const handleUser = require('./user.js');
 const handleProduct = require('./product.js');
+const handleReview = require('./comment.js');
+const handleOrder = require('./order.js');
 const express = require('express');
 const app = express();
 const cors = require('cors');
@@ -34,7 +36,7 @@ app.use(cors());
 app.post('/login', jsonParser, async function (req, res) {
     const { username, password } = req.body;
     const results = await handleUser.login(username, sha256(password));
-    console.log('results ID', results.ID);
+    // console.log('results ID', results.ID);
     if (results) {
         res.send({message: 'Logged in', ID: results.ID, username: username, isCreator: results.IsCreator});
     }
@@ -115,9 +117,19 @@ app.post('/getAllProducts', jsonParser, async function (req, res) {
 }
 );
 
+app.post('/getProduct', jsonParser, async function (req, res) {
+    const { ID } = req.body;
+    results = await handleProduct.getProduct(ID);
+    console.log(results);
+    res.send(results[0]);
+
+}
+);
+
 app.post('/deleteProduct', jsonParser, async function (req, res) {
-    const { productID } = req.body;
-    results = await handleProduct.deleteProduct(productID);
+    const { ID } = req.body;
+    console.log('productID in index:', ID);
+    results = await handleProduct.deleteProduct(ID);
     console.log(results);
     if (results == 0) {
         res.send({ message: 'Error deleting product' });
@@ -127,6 +139,52 @@ app.post('/deleteProduct', jsonParser, async function (req, res) {
     }
 
 });
+
+app.post('/addComment', jsonParser, async function (req, res) {
+    const { productID, userID, rating, comment } = req.body;
+    results = await handleReview.createComment(productID, userID, rating, comment);
+    console.log(results);
+    if (results == 0) {
+        res.send({ message: 'Error adding review' });
+    }
+    else {
+        res.send({ message: 'Review added' });
+    }
+
+}
+);
+
+app.post('/getComments', jsonParser, async function (req, res) {
+    const { productID } = req.body;
+    results = await handleReview.getComments(productID);
+    console.log('results in index:', results);
+    res.send(results);
+
+}
+);
+
+app.post('/createOrder', jsonParser, async function (req, res) {
+    const { productID, userID } = req.body;
+    results = await handleOrder.createOrder(productID, userID);
+    console.log(results);
+    if (results == 0) {
+        res.send({ message: 'Error creating order' });
+    }
+    else {
+        res.send({ message: 'Order created' });
+    }
+
+}
+);
+
+app.post('/getOrdersByUser', jsonParser, async function (req, res) {
+    const { userID } = req.body;
+    results = await handleOrder.getOrdersByUser(userID);
+    console.log('results in server', results);
+    res.send(results);
+
+}
+);
 
 
 
