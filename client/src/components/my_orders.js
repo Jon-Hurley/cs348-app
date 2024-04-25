@@ -9,9 +9,28 @@ const OrdersPage = () => {
 
   console.log('UserID at start:', userID);
   const [orders, setOrders] = useState([]);
+  const [aggregateOrders, setAggregateOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const fetchAggregateOrders = async () => {
+      try {
+        const response = await axios.post('http://localhost:8080/getAggregateOrdersByUser', {
+          userID: userID
+        });
+
+        console.log('UserID:', userID);
+
+        console.log('Orders in frontend:', response.data);
+      
+        setAggregateOrders(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching orders:', error);
+        setLoading(false);
+      }
+    };
+
     const fetchOrders = async () => {
       try {
         const response = await axios.post('http://localhost:8080/getOrdersByUser', {
@@ -28,9 +47,11 @@ const OrdersPage = () => {
         console.error('Error fetching orders:', error);
         setLoading(false);
       }
-    };
+    }
+
 
     fetchOrders();
+    fetchAggregateOrders();
   }, [userID]); // Fetch orders when userID changes
 
   // Function to navigate to the shop
@@ -53,6 +74,32 @@ const OrdersPage = () => {
           {orders.length === 0 ? (
             <p>No orders found.</p>
           ) : (
+            <div>
+              <h3>Individual Orders</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Product Name</th>
+                  <th>Price</th>
+                  <th>Order Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orders.map(order => (
+                  <tr key={order.product}>
+                    <td>
+                      {/* Button for each product */}
+                      <button onClick={() => navigateToProduct(order.ID)}>
+                        {order.product}
+                      </button>
+                    </td>
+                    <td>{order.price}</td>
+                    <td>{order.date}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <h3>Order Aggregates</h3>
             <table>
               <thead>
                 <tr>
@@ -63,7 +110,7 @@ const OrdersPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {orders.map(order => (
+                {aggregateOrders.map(order => (
                   <tr key={order.product}>
                     <td>
                       {/* Button for each product */}
@@ -78,6 +125,7 @@ const OrdersPage = () => {
                 ))}
               </tbody>
             </table>
+            </div>
           )}
         </div>
       )}

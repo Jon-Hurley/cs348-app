@@ -51,7 +51,7 @@ async function createOrder(productID, userID) {
 
 }
 
-async function getOrdersByUser(userID) {
+async function getAggregateOrdersByUser(userID) {
     try {
         const connection = mysql.createConnection({
             host: 'localhost',
@@ -83,5 +83,37 @@ async function getOrdersByUser(userID) {
     }
 }
 
+async function getOrdersByUser(userID) {
+    try {
+        const connection = mysql.createConnection({
+            host: 'localhost',
+            user: 'root',
+            port: 3306,
+            password: 'Livvy2005',
+            database: 'new_schema'
+        });
 
-module.exports = { createOrder, getOrdersByUser };
+        console.log('Connected to database');
+
+        // select product name, product price, and order date
+        const query = 'SELECT p.ID, p.Name AS product, p.Price AS price, o.OrderDate AS date \
+        FROM Orders o JOIN Product p ON o.ProductID = p.ID \
+        WHERE o.BuyerID = ?;'
+
+        const [results] = await connection.promise().query(query, [userID]);
+        
+        connection.end();
+
+        console.log('results in getOrdersByUser:', results);
+
+        return results;
+
+    } catch (error) {
+        console.error('Error executing query:', error);
+        return [];
+    }
+}
+        
+
+
+module.exports = { createOrder, getOrdersByUser, getAggregateOrdersByUser };

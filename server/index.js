@@ -109,13 +109,8 @@ app.post('/getProductsByCreator', jsonParser, async function (req, res) {
 );
 
 app.post('/getAllProducts', jsonParser, async function (req, res) {
-    const { productName, creatorUsername, sortOrder } = req.body;
-    console.log('in get all products');
-    console.log('productName:', productName);
-    console.log('creatorUsernameFilter:', creatorUsername);
-    console.log('sort:', sortOrder);
-    results = await handleProduct.getProducts(productName, creatorUsername, sortOrder);
-    console.log('after get all products');
+    const { productName, creatorUsername, sortOption, sortOrder } = req.body;
+    results = await handleProduct.getProducts(productName, creatorUsername, sortOption, sortOrder);
     console.log(results);
     res.send(results);
 
@@ -147,7 +142,7 @@ app.post('/deleteProduct', jsonParser, async function (req, res) {
 
 app.post('/addComment', jsonParser, async function (req, res) {
     const { productID, userID, rating, comment } = req.body;
-    results = await handleReview.createComment(productID, userID, rating, comment);
+    results = await handleReview.createComment(userID, productID, rating, comment);
     console.log(results);
     if (results == 0) {
         res.send({ message: 'Error adding review' });
@@ -160,7 +155,9 @@ app.post('/addComment', jsonParser, async function (req, res) {
 );
 
 app.post('/getComments', jsonParser, async function (req, res) {
+    console.log('sanity check')
     const { productID } = req.body;
+    console.log('in getComments');
     results = await handleReview.getComments(productID);
     console.log('results in index:', results);
     res.send(results);
@@ -185,6 +182,15 @@ app.post('/createOrder', jsonParser, async function (req, res) {
 app.post('/getOrdersByUser', jsonParser, async function (req, res) {
     const { userID } = req.body;
     results = await handleOrder.getOrdersByUser(userID);
+    console.log('results in server', results);
+    res.send(results);
+
+}
+);
+
+app.post('/getAggregateOrdersByUser', jsonParser, async function (req, res) {
+    const { userID } = req.body;
+    results = await handleOrder.getAggregateOrdersByUser(userID);
     console.log('results in server', results);
     res.send(results);
 

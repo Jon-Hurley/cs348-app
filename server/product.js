@@ -46,7 +46,7 @@ async function publishProduct(userID, name, description, price) {
     return 1;
 }
 
-async function getProducts(productNameFilter, creatorNameFilter, sortOrder) {
+async function getProducts(productNameFilter, creatorNameFilter, sortOption, sortOrder) {
     const connection = mysql.createConnection({
         host: 'localhost',
         user: 'root',
@@ -64,16 +64,49 @@ async function getProducts(productNameFilter, creatorNameFilter, sortOrder) {
     }
     );
     let query;
-    if (sortOrder === 'asc') {
-        query = `SELECT p.ID, u.Username, p.Name, p.Description, p.Price FROM Product p JOIN User u ON u.ID = p.CreatorID WHERE p.Name LIKE ? AND u.Username LIKE ? ORDER BY p.Price ASC;`;
+    if (sortOption === 'price') {
+        if (sortOrder === 'asc') {
+            query = `SELECT p.ID, u.Username, p.Name, p.Description, p.Price FROM Product p JOIN User u ON u.ID = p.CreatorID WHERE p.Name LIKE ? AND u.Username LIKE ? ORDER BY p.Price ASC;`;
+        }
+        else {
+            query = `SELECT p.ID, u.Username, p.Name, p.Description, p.Price FROM Product p JOIN User u ON u.ID = p.CreatorID WHERE p.Name LIKE ? AND u.Username LIKE ? ORDER BY p.Price DESC;`;
+        }
     }
     else {
-        query = `SELECT p.ID, u.Username, p.Name, p.Description, p.Price FROM Product p JOIN User u ON u.ID = p.CreatorID WHERE p.Name LIKE ? AND u.Username LIKE ? ORDER BY p.Price DESC;`;
+        // create queries for sortOption === 'rating'. Need to grab average rating per product before sorting. It also needs to use a union to get the products with no reviews.
+        if (sortOrder === 'asc') {
+            query = `SELECT p.ID, u.Username, p.Name, p.Description, p.Price, r.avgRating \
+            FROM Product p JOIN User u ON u.ID = p.CreatorID JOIN (SELECT ProductID, AVG(Rating) AS avgRating FROM Review GROUP BY ProductID) r ON p.ID = r.ProductID \
+            WHERE p.Name LIKE ? AND u.Username LIKE ? \
+            UNION \
+            SELECT p.ID, u.Username, p.Name, p.Description, p.Price, 0 AS avgRating \
+            FROM Product p JOIN User u ON u.ID = p.CreatorID \
+            WHERE p.ID NOT IN (SELECT ProductID FROM Review) AND p.Name LIKE ? AND u.Username LIKE ? \
+            ORDER BY avgRating ASC;`;
+        }
+        else {
+            query = `SELECT p.ID, u.Username, p.Name, p.Description, p.Price, r.avgRating \
+            FROM Product p JOIN User u ON u.ID = p.CreatorID JOIN (SELECT ProductID, AVG(Rating) AS avgRating FROM Review GROUP BY ProductID) r ON p.ID = r.ProductID \
+            WHERE p.Name LIKE ? AND u.Username LIKE ? \
+            UNION \
+            SELECT p.ID, u.Username, p.Name, p.Description, p.Price, 0 AS avgRating \
+            FROM Product p JOIN User u ON u.ID = p.CreatorID \
+            WHERE p.ID NOT IN (SELECT ProductID FROM Review) AND p.Name LIKE ? AND u.Username LIKE ? \
+            ORDER BY avgRating DESC;`;
+        }
     }
 
     try {
         const results = await new Promise((resolve, reject) => {
-            const array = [`%${productNameFilter}%`, `%${creatorNameFilter}%`];
+            const array_price = [`%${productNameFilter}%`, `%${creatorNameFilter}%`];
+            const array_rating = [`%${productNameFilter}%`, `%${creatorNameFilter}%`, `%${productNameFilter}%`, `%${creatorNameFilter}%`];
+            let array;
+            if (sortOption === 'price') {
+                array = array_price;
+            }
+            else {
+                array = array_rating;
+            }
             connection.query(query, array , (err, results) => {
                 if (err) {
                     console.error('Error executing query:', err);
@@ -114,7 +147,7 @@ async function getProduct(productID) {
     }
     );
     // query to get product by ID and username of creator
-    const query = `SELECT u.Username AS creator, u.ID, p.Name AS name, p.Description AS description, p.Price AS price FROM User u JOIN Product p ON u.ID = p.CreatorID WHERE p.ID = ?`;
+    const query = `SELECT u.Username AS creator, u.ID as userID, p.ID, p.Name AS name, p.Description AS description, p.Price AS price FROM User u JOIN Product p ON u.ID = p.CreatorID WHERE p.ID = ?`;
 
     try {
         const results = await new Promise((resolve, reject) => {

@@ -47,6 +47,7 @@ async function createComment(userID, productID, rating, description) {
 }
 
 async function getComments(productID) {
+    console.log('productID in query:', productID);
 
     const connection = mysql.createConnection({
         host: 'localhost',
@@ -62,32 +63,47 @@ async function getComments(productID) {
             return 0;
         }
         console.log('Connected to database');
-    }
-    );
+    });
 
-    const query = `SELECT u.Username AS user, r.Rating AS rating, r.Description AS comment FROM Review r JOIN User u ON r.UserID = u.ID WHERE ProductID = ?;`;
+    const commentsQuery = `SELECT u.Username AS user, r.Rating AS rating, r.Description AS comment FROM Review r JOIN User u ON r.UserID = u.ID WHERE ProductID = ?;`;
+    const averageQuery = `SELECT AVG(Rating) AS averageRating FROM Review WHERE ProductID = ?;`;
 
     try {
-        const results = await new Promise((resolve, reject) => {
-            connection.query(query, [productID], (err, results) => {
+        const commentsPromise = new Promise((resolve, reject) => {
+            connection.query(commentsQuery, [productID], (err, results) => {
                 if (err) {
-                    console.error('Error executing query:', err);
+                    console.error('Error executing comments query:', err);
                     reject(err);
                 } else {
                     console.log('Comments retrieved successfully');
                     resolve(results);
                 }
             });
-        }
-        );
+        });
+
+        const averagePromise = new Promise((resolve, reject) => {
+            connection.query(averageQuery, [productID], (err, results) => {
+                if (err) {
+                    console.error('Error executing average query:', err);
+                    reject(err);
+                } else {
+                    console.log('Average rating retrieved successfully');
+                    resolve(results[0].averageRating);
+                }
+            });
+        });
+
+        const [comments, averageRating] = await Promise.all([commentsPromise, averagePromise]);
+        
         connection.end();
-        return results;
-    }
-    catch (err) {
+        
+        return { comments, averageRating };
+    } catch (err) {
         // Handle error
+        console.error('Error in getCommentsWithAverage:', err);
         return null;
     }
-
 }
+
 
 module.exports = { createComment, getComments };

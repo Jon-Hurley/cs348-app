@@ -6,6 +6,7 @@ const ProductsPage = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortOption, setSortOption] = useState('price'); // Default sort option is price
   const [sortOrder, setSortOrder] = useState('asc'); // Default sorting order is ascending
   const [productNameFilter, setProductNameFilter] = useState('');
   const [creatorUsernameFilter, setCreatorUsernameFilter] = useState('');
@@ -19,20 +20,20 @@ const ProductsPage = () => {
     try {
       console.log('Filtering products:', productNameFilter, creatorUsernameFilter);
       const response = await axios.post('http://localhost:8080/getAllProducts', {
-        productName: productNameFilter,
-        creatorUsername: creatorUsernameFilter,
+        productName: productNameFilter, // Send the product name filter to the backend
+        creatorUsername: creatorUsernameFilter, // Send the creator username filter to the backend
+        sortOption: sortOption, // Send the sorting option to the backend
         sortOrder: sortOrder // Send the sorting order to the backend
       });
       setProducts(response.data);
     } catch (error) {
       console.error('Error fetching products:', error);
-      // Handle error, e.g., show an error message or navigate to an error page
     }
   };
 
   useEffect(() => {
     fetchProducts(); // Fetch products when the component mounts
-  }, [productNameFilter, creatorUsernameFilter, sortOrder]); // Fetch products when the search filters or sorting order change
+  }, [productNameFilter, creatorUsernameFilter, sortOption, sortOrder]); // Fetch products when the search filters or sorting options change
 
   const totalPages = Math.ceil(products.length / productsPerPage);
 
@@ -43,6 +44,10 @@ const ProductsPage = () => {
   const handleSort = () => {
     // Toggle sorting order when the sort button is clicked
     setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+  };
+
+  const handleSortOptionChange = (e) => {
+    setSortOption(e.target.value);
   };
 
   const currentProducts = products.slice(
@@ -68,8 +73,12 @@ const ProductsPage = () => {
         />
       </div>
       <div className="sorting">
+        <select value={sortOption} onChange={handleSortOptionChange}>
+          <option value="price">Sort by Price</option>
+          <option value="rating">Sort by Rating</option>
+        </select>
         <button onClick={handleSort}>
-          {sortOrder === 'asc' ? 'Sort by Price (Low to High)' : 'Sort by Price (High to Low)'}
+          {sortOrder === 'asc' ? 'Low to High' : 'High to Low'}
         </button>
       </div>
       <div className="product-list">
@@ -78,6 +87,7 @@ const ProductsPage = () => {
             <h3>{product.Name}</h3>
             <p>Description: {product.Description}</p>
             <p>Price: ${product.Price}</p>
+            <p>Rating: {product.avgRating}</p>
             <button onClick={() => handleProductClick(product.ID)}>Select</button>
           </div>
         ))}
