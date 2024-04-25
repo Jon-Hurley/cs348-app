@@ -204,7 +204,7 @@ const AccountPage = () => {
         {isCreator && <button onClick={handleCreateProduct}>Create Product</button>}
         {isCreator && <button onClick={handleGoToMyProducts}>Go to My Products</button>}
         <button onClick={handleGoToShop}>Go to Shop</button>
-        <button onClick={() => navigate('/my_orders')}>Go to My Orders</button>
+        <button onClick={() => navigate('/my-orders')}>Go to My Orders</button>
       </div>
     </div>
   );

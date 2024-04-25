@@ -38,7 +38,12 @@ const ProductPage = () => {
         alert('Error creating order');
       });
 
-      navigate('/my_orders');
+      navigate('/my-orders');
+  };
+
+  const handleEdit = () => {
+    // Navigate to the edit page
+    navigate(`/edit-product/${productID}`);
   };
 
   useEffect(() => {
@@ -60,6 +65,7 @@ const ProductPage = () => {
         </div>
         <div>
           <button onClick={handlePurchase}>Purchase</button>
+          {userID === product.ID && <button onClick={handleEdit}>Edit</button>}
         </div>
         <div>
           <button onClick={() => navigate('/shop')}>Back to Shop</button>

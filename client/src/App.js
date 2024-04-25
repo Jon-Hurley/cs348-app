@@ -14,6 +14,7 @@ import ProductPage from './components/product.js';
 import OrdersPage from './components/my_orders.js';
 import { AuthProvider } from './components/auth_context.js';
 import Navigation from './components/navigation.js';
+import EditProductPage from './components/edit_product.js';
 
 let user = {
   username: '',
@@ -34,7 +35,8 @@ const App = () => {
         <Route path="publish-product" element={<PublishProductPage/>} />
         <Route path="my-products" element={<MyProductsPage/>} />
         <Route path="shop/:productID" element={<ProductPage/>} />
-        <Route path="my_orders" element={<OrdersPage/>} />
+        <Route path="my-orders" element={<OrdersPage/>} />
+        <Route path="edit-product/:productID" element={<EditProductPage/>} />
         <Route path="*" element={<h1>Page not found</h1>} />
       </Routes>
     </Router>

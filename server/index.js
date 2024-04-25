@@ -109,8 +109,13 @@ app.post('/getProductsByCreator', jsonParser, async function (req, res) {
 );
 
 app.post('/getAllProducts', jsonParser, async function (req, res) {
-    const { userID } = req.body;
-    results = await handleProduct.getProducts();
+    const { productName, creatorUsername, sortOrder } = req.body;
+    console.log('in get all products');
+    console.log('productName:', productName);
+    console.log('creatorUsernameFilter:', creatorUsername);
+    console.log('sort:', sortOrder);
+    results = await handleProduct.getProducts(productName, creatorUsername, sortOrder);
+    console.log('after get all products');
     console.log(results);
     res.send(results);
 
@@ -186,15 +191,18 @@ app.post('/getOrdersByUser', jsonParser, async function (req, res) {
 }
 );
 
+app.post('/updateProduct', jsonParser, async function (req, res) {
+    const { ID, name, description, price } = req.body;
+    results = await handleProduct.updateProduct(ID, name, description, price);
+    console.log(results);
+    if (results == 0) {
+        res.send({ message: 'Error updating product' });
+    }
+    else {
+        res.send({ message: 'Product updated' });
+    }
 
-
-
+}
+);
 
 app.listen(8080, () => console.log('Server running on port 8080'));
-
-
-// send the name from the request back to the client
-// app.post('/', jsonParser, function (req, res) {
-//     console.log(req);
-//     res.send('Hello ' + req.body.name);
-//     });
