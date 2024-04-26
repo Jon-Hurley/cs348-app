@@ -189,6 +189,8 @@ const CreateAccount = () => {
           <button type="submit">Create Account</button>
         </div>
       </form>
+      <button onClick={() => navigate('/login')}>Already have an account? Login</button>
+      <button onClick={() => navigate('/')}>Return to the landing page</button>
     </div>
   );
 };

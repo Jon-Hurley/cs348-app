@@ -7,24 +7,9 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 var bodyParser = require('body-parser');
-// const mysql = require('mysql2');
+
 sha256 = require('js-sha256').sha256;
 
-// const connection = mysql.createConnection({
-//     host: 'localhost',
-//     user: 'root',
-//     port: 3306,
-//     password: 'Livvy2005',
-//     database: 'new_schema'
-// });
-// connection.connect();
-
-// connection.query('SELECT 1 + 1 AS solution', function (error, results, fields) {
-//     if (error) throw error;
-//     console.log('The solution is: ', results[0].solution);
-// })
-
-// // connection.end();
 createSchema.createSchema();
 
 var jsonParser = bodyParser.json()

@@ -2,11 +2,11 @@ const mysql = require('mysql2');
 
 async function createUser(username, password, isCreator) {
     const connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        port: 3306,
-        password: 'Livvy2005',
-        database: 'new_schema'
+        host: config.database.host,
+        user: config.database.user,
+        port: config.database.port,
+        password: config.database.password,
+        database: config.database.database
     });
 
     connection.connect((err) => {
@@ -30,7 +30,9 @@ async function createUser(username, password, isCreator) {
     }
 
     // If username doesn't exist, proceed with user creation
-    const insertQuery = `INSERT INTO User (Username, Password, IsCreator) VALUES (?, ?, ?)`;
+    // const insertQuery = `INSERT INTO User (Username, Password, IsCreator) VALUES (?, ?, ?)`;
+
+    const insertQuery = `CALL createUser(?, ?, ?)`;
     try {
         await connection.promise().query(insertQuery, [username, password, isCreator]);
         console.log('User created successfully');
@@ -56,11 +58,11 @@ async function createUser(username, password, isCreator) {
 
 async function login(username, password) {
     const connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        port: 3306,
-        password: 'Livvy2005',
-        database: 'new_schema'
+        host: config.database.host,
+        user: config.database.user,
+        port: config.database.port,
+        password: config.database.password,
+        database: config.database.database
     });
 
     await connection.promise().connect((err) => {
@@ -94,11 +96,11 @@ async function login(username, password) {
 
 async function changePassword(username, password) {
     const connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        port: 3306,
-        password: 'Livvy2005',
-        database: 'new_schema'
+        host: config.database.host,
+        user: config.database.user,
+        port: config.database.port,
+        password: config.database.password,
+        database: config.database.database
     });
 
     await connection.promise().connect((err) => {
@@ -124,11 +126,11 @@ async function changePassword(username, password) {
 
 async function deleteUser(username) {
     const connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        port: 3306,
-        password: 'Livvy2005',
-        database: 'new_schema'
+        host: config.database.host,
+        user: config.database.user,
+        port: config.database.port,
+        password: config.database.password,
+        database: config.database.database
     });
 
     await connection.promise().connect((err) => {
@@ -140,7 +142,9 @@ async function deleteUser(username) {
     }
     );
 
-    const query = `DELETE FROM User WHERE Username = ?`;
+    // const query = `DELETE FROM User WHERE Username = ?`;
+
+    const query = `CALL deleteUser(?)`;
     const [results] = await connection.promise().query(query, [username], (err, results) => {
         if (err) {
             console.error('Error executing query:', err);

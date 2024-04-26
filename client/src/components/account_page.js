@@ -120,7 +120,7 @@ const AccountPage = () => {
     // Call the onDeleteAccount function passed as a prop
     // Assuming the deleteUser function is available in the AuthContext
     axios.post('http://localhost:8080/deleteUser', {
-        username: username
+        username: userID
     }).then((res) => {
       console.log(res);
       if (res.data.message === 'User deleted') {
@@ -137,12 +137,12 @@ const AccountPage = () => {
   const handleLogout = () => {
     // Call the logout function from the AuthContext
     logout();
-    navigate('/login');
+    navigate('/');
   };
 
   useEffect(() => {
     if (!userID) {
-      navigate('/login');
+      navigate('/');
     }
   }, [userID]);
 

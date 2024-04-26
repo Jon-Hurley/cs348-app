@@ -3,11 +3,11 @@ const mysql = require('mysql2');
 async function createComment(userID, productID, rating, description) {
 
     const connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        port: 3306,
-        password: 'Livvy2005',
-        database: 'new_schema'
+        host: config.database.host,
+        user: config.database.user,
+        port: config.database.port,
+        password: config.database.password,
+        database: config.database.database
     });
 
     connection.connect((err) => {
@@ -50,11 +50,11 @@ async function getComments(productID) {
     console.log('productID in query:', productID);
 
     const connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        port: 3306,
-        password: 'Livvy2005',
-        database: 'new_schema'
+        host: config.database.host,
+        user: config.database.user,
+        port: config.database.port,
+        password: config.database.password,
+        database: config.database.database
     });
 
     connection.connect((err) => {

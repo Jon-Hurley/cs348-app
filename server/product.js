@@ -2,11 +2,11 @@ const mysql = require('mysql2');
 
 async function publishProduct(userID, name, description, price) {
     const connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        port: 3306,
-        password: 'Livvy2005',
-        database: 'new_schema'
+        host: config.database.host,
+        user: config.database.user,
+        port: config.database.port,
+        password: config.database.password,
+        database: config.database.database
     });
 
     console.log('userID in query:', userID);
@@ -19,7 +19,9 @@ async function publishProduct(userID, name, description, price) {
         console.log('Connected to database');
     });
 
-    const query = `INSERT INTO Product (CreatorID, Name, Description, Price) VALUES (?, ?, ?, ?);`;
+    // const query = `INSERT INTO Product (CreatorID, Name, Description, Price) VALUES (?, ?, ?, ?);`;
+
+    const query = `CALL PublishProduct(?, ?, ?, ?)`;
 
     try {
         await new Promise((resolve, reject) => {
@@ -48,11 +50,11 @@ async function publishProduct(userID, name, description, price) {
 
 async function getProducts(productNameFilter, creatorNameFilter, sortOption, sortOrder) {
     const connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        port: 3306,
-        password: 'Livvy2005',
-        database: 'new_schema'
+        host: config.database.host,
+        user: config.database.user,
+        port: config.database.port,
+        password: config.database.password,
+        database: config.database.database
     });
 
     connection.connect((err) => {
@@ -130,11 +132,11 @@ async function getProducts(productNameFilter, creatorNameFilter, sortOption, sor
 
 async function getProduct(productID) {
     const connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        port: 3306,
-        password: 'Livvy2005',
-        database: 'new_schema'
+        host: config.database.host,
+        user: config.database.user,
+        port: config.database.port,
+        password: config.database.password,
+        database: config.database.database
     });
 
     connection.connect((err) => {
@@ -177,11 +179,11 @@ async function getProduct(productID) {
 
 async function getProductsByCreator(creatorID) {
     const connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        port: 3306,
-        password: 'Livvy2005',
-        database: 'new_schema'
+        host: config.database.host,
+        user: config.database.user,
+        port: config.database.port,
+        password: config.database.password,
+        database: config.database.database
     });
 
     connection.connect((err) => {
@@ -220,11 +222,11 @@ async function getProductsByCreator(creatorID) {
 
 async function deleteProduct(productID) {
     const connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        port: 3306,
-        password: 'Livvy2005',
-        database: 'new_schema'
+        host: config.database.host,
+        user: config.database.user,
+        port: config.database.port,
+        password: config.database.password,
+        database: config.database.database
     });
 
     connection.connect((err) => {
@@ -236,7 +238,9 @@ async function deleteProduct(productID) {
     }
     );
 
-    const query = `DELETE FROM Product WHERE ID = ?`;
+    // const query = `DELETE FROM Product WHERE ID = ?`;
+
+    const query = `CALL DeleteProduct(?)`;
 
     try {
         await new Promise((resolve, reject) => {
@@ -266,11 +270,11 @@ async function deleteProduct(productID) {
 
 async function updateProduct(productID, name, description, price) {
     const connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        port: 3306,
-        password: 'Livvy2005',
-        database: 'new_schema'
+        host: config.database.host,
+        user: config.database.user,
+        port: config.database.port,
+        password: config.database.password,
+        database: config.database.database
     });
 
     connection.connect((err) => {

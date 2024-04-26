@@ -134,6 +134,8 @@ const Login = () => {
           <button type="submit">Login</button>
         </div>
       </form>
+      <button onClick={() => navigate('/create-account')}>New user? Create Account</button>
+      <button onClick={() => navigate('/')}>Return to the landing page</button>
     </div>
   );
 };

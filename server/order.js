@@ -1,12 +1,13 @@
 const mysql = require('mysql2');
+const config = require('../client/src/config.js');
 
 async function createOrder(productID, userID) {
     const connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        port: 3306,
-        password: 'Livvy2005',
-        database: 'new_schema'
+        host: config.database.host,
+        user: config.database.user,
+        port: config.database.port,
+        password: config.database.password,
+        database: config.database.database
     });
 
 
@@ -54,11 +55,11 @@ async function createOrder(productID, userID) {
 async function getAggregateOrdersByUser(userID) {
     try {
         const connection = mysql.createConnection({
-            host: 'localhost',
-            user: 'root',
-            port: 3306,
-            password: 'Livvy2005',
-            database: 'new_schema'
+            host: config.database.host,
+            user: config.database.user,
+            port: config.database.port,
+            password: config.database.password,
+            database: config.database.database
         });
 
         console.log('Connected to database');
@@ -86,11 +87,11 @@ async function getAggregateOrdersByUser(userID) {
 async function getOrdersByUser(userID) {
     try {
         const connection = mysql.createConnection({
-            host: 'localhost',
-            user: 'root',
-            port: 3306,
-            password: 'Livvy2005',
-            database: 'new_schema'
+            host: config.database.host,
+            user: config.database.user,
+            port: config.database.port,
+            password: config.database.password,
+            database: config.database.database
         });
 
         console.log('Connected to database');
