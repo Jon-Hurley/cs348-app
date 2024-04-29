@@ -18,7 +18,7 @@ async function createOrder(productID, userID) {
         }
         console.log('Connected to database');
     });
-
+    // chose repeatable read because don't need to lock the entire order table
     await connection.promise().beginTransaction();
 
     const gatherProduct = `SELECT CreatorID, Price FROM Product WHERE ID = ?`;
@@ -65,7 +65,8 @@ async function getAggregateOrdersByUser(userID) {
 
         console.log('Connected to database');
 
-        await connection.execute('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE');
+        // chose read uncommitted because these are aggregate queries
+        await connection.execute('SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;');
         await connection.promise().beginTransaction();
 
         // select product name, order quantity, product price, and total price
@@ -102,6 +103,7 @@ async function getOrdersByUser(userID) {
         
         console.log('Connected to database');
 
+        // chose repeatable read because only the user's orders are being read
         await connection.promise().beginTransaction();
 
         // select product name, product price, and order date

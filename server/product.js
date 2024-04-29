@@ -149,7 +149,7 @@ async function getProduct(productID) {
         console.log('Connected to database');
     }
     );
-
+    // chose read committed because only one product is being read
     await connection.execute('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
 
     await connection.promise().beginTransaction();
@@ -204,7 +204,7 @@ async function getProductsByCreator(creatorID) {
         console.log('Connected to database');
     }
     );
-
+    // chose repeatable read because only a particular user's products are being read
     await connection.promise().beginTransaction();
 
     const query = `SELECT * FROM Product WHERE CreatorID = ?`;
@@ -254,8 +254,7 @@ async function deleteProduct(productID) {
         console.log('Connected to database');
     }
     );
-
-    await connection.execute('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
+    // chose repeatable read because once read the product, it will be deleted
 
     await connection.promise().beginTransaction();
 
@@ -319,7 +318,7 @@ async function updateProduct(productID, name, description, price) {
         console.log('Connected to database');
     }
     );
-
+    // chose repeatable read because only one product is being updated
     await connection.promise().beginTransaction();
 
     const query = `UPDATE Product SET Name = ?, Description = ?, Price = ? WHERE ID = ?`;

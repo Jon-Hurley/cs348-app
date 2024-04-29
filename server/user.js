@@ -156,7 +156,7 @@ async function deleteUser(userID) {
 
     try {
 
-
+        // delete all foreign key constraints
         const deleteProductReviewsQuery = `DELETE FROM Review WHERE ProductID IN (SELECT ID FROM Product WHERE CreatorID = ?);`;
         await connection.promise().query(deleteProductReviewsQuery, [userID]);
 
