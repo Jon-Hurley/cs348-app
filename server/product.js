@@ -1,4 +1,5 @@
 const mysql = require('mysql2');
+const config = require('../client/src/config.js');
 
 async function publishProduct(userID, name, description, price) {
     const connection = mysql.createConnection({
@@ -148,6 +149,10 @@ async function getProduct(productID) {
         console.log('Connected to database');
     }
     );
+
+    await connection.execute('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
+
+    await connection.promise().beginTransaction();
     // query to get product by ID and username of creator
     const query = `SELECT u.Username AS creator, u.ID as userID, p.ID, p.Name AS name, p.Description AS description, p.Price AS price FROM User u JOIN Product p ON u.ID = p.CreatorID WHERE p.ID = ?`;
 
@@ -165,6 +170,7 @@ async function getProduct(productID) {
             });
         }
         );
+        await connection.promise().commit();
 
         console.log('Results in getProduct:', results);
 
@@ -173,7 +179,11 @@ async function getProduct(productID) {
     }
     catch (err) {
         // Handle error
+        console.log('Error in getProduct:', err);
+        await connection.promise().rollback();
         return 0;
+    } finally {
+        connection.end();
     }
 }
 
@@ -195,6 +205,8 @@ async function getProductsByCreator(creatorID) {
     }
     );
 
+    await connection.promise().beginTransaction();
+
     const query = `SELECT * FROM Product WHERE CreatorID = ?`;
     
     try {
@@ -212,11 +224,16 @@ async function getProductsByCreator(creatorID) {
         }
         );
         console.log('Results for creator:', results);
+        await connection.promise().commit();
         return results;
     }
     catch (err) {
         // Handle error
+        console.log('Error in getProductsByCreator:', err);
+        await connection.promise().rollback();
         return 0;
+    } finally {
+        connection.end();
     }
 }
 
@@ -238,12 +255,24 @@ async function deleteProduct(productID) {
     }
     );
 
+    await connection.execute('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
+
+    await connection.promise().beginTransaction();
+
     // const query = `DELETE FROM Product WHERE ID = ?`;
+
+    const deleteReviewsQuery = `DELETE FROM Review WHERE ProductID = ?`;
 
     const query = `CALL DeleteProduct(?)`;
 
     try {
         await new Promise((resolve, reject) => {
+            connection.query(deleteReviewsQuery, [productID], (err, results) => {
+                if (err) {
+                    console.error('Error executing query:', err);
+                    reject(err);
+                }
+            });
             connection.query(query, [productID], (err, results) => {
                 if (err) {
                     console.error('Error executing query:', err);
@@ -256,10 +285,15 @@ async function deleteProduct(productID) {
             });
         }
         );
+        await connection.promise().commit();
     }
     catch (err) {
         // Handle error
+        console.log('Error in deleteProduct:', err);
+        await connection.promise().rollback();
         return 0;
+    } finally {
+        connection.end();
     }
     
     connection.end();
@@ -286,6 +320,8 @@ async function updateProduct(productID, name, description, price) {
     }
     );
 
+    await connection.promise().beginTransaction();
+
     const query = `UPDATE Product SET Name = ?, Description = ?, Price = ? WHERE ID = ?`;
 
     try {
@@ -302,13 +338,16 @@ async function updateProduct(productID, name, description, price) {
             });
         }
         );
+        await connection.promise().commit();
     }
     catch (err) {
         // Handle error
+        console.log('Error in updateProduct:', err);
+        await connection.promise().rollback();
         return 0;
+    } finally {
+        connection.end();
     }
-
-    connection.end();
 
     return 1;
 }

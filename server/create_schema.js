@@ -1,4 +1,5 @@
 const mysql = require('mysql2');
+const config = require('../client/src/config.js');
 
 
 function createSchema() {
@@ -43,15 +44,8 @@ function createSchema() {
         CreatorID INT,
         BuyerID INT,
         OrderDate DATE,
-        FOREIGN KEY (ProductID) REFERENCES Product(ID),
-        FOREIGN KEY (CreatorID) REFERENCES User(ID),
-        FOREIGN KEY (BuyerID) REFERENCES User(ID)
+        Price DECIMAL(10, 2)
         );`,
-        `CREATE INDEX IF NOT EXISTS idx_product_name ON Product(Name);`,
-        `CREATE INDEX IF NOT EXISTS idx_user_username ON User(Username);`,
-        `CREATE INDEX IF NOT EXISTS idx_user_id ON User(ID);`,
-        `CREATE INDEX IF NOT EXISTS idx_review_product_id ON Review(ProductID);`,
-        `CREATE INDEX IF NOT EXISTS idx_orders_buyer_id ON Orders(BuyerID);`,
         `CREATE PROCEDURE IF NOT EXISTS PublishProduct(IN userID INT, IN name VARCHAR(255), IN description TEXT, IN price DECIMAL(10,2)) 
          BEGIN 
              INSERT INTO Product (CreatorID, Name, Description, Price) VALUES (userID, name, description, price); 
@@ -68,6 +62,13 @@ function createSchema() {
          BEGIN
              DELETE FROM User WHERE ID = userID;
          END;`,
+        //  `CREATE INDEX idx_Product_CreatorID ON Product (CreatorID);`,
+        //  `CREATE INDEX idx_Review_ProductID ON Review (ProductID);`,
+        //  `CREATE INDEX idx_Review_UserID ON Review (UserID);`,
+        //  `CREATE INDEX idx_Orders_ProductID_BuyerID ON Orders (ProductID, BuyerID);`,
+        //  `CREATE INDEX idx_User_Username ON User (Username);`,
+        //  `CREATE INDEX idx_Product_Name ON Product (Name);`,
+        //  `CREATE INDEX idx_User UserID ON User (ID);`
 
 
 

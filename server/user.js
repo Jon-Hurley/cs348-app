@@ -1,4 +1,5 @@
 const mysql = require('mysql2');
+const config = require('../client/src/config.js');
 
 async function createUser(username, password, isCreator) {
     const connection = mysql.createConnection({
@@ -74,24 +75,36 @@ async function login(username, password) {
     });
 
     const query = `SELECT * FROM User WHERE Username = ? AND Password = ?`;
-    const [results1] = await connection.promise().query(query, [username, password], (err, results) => {
-        if (err) {
-            console.error('Error executing query:', err);
-            return null;
-        }
-        // if no results
-        if (results.length === 0) {
-            console.log('Login failed');
-            return null;
-        }
-        console.log('Login successful');
-    });
 
-    connection.end();
+    await connection.promise().beginTransaction();
 
-    console.log('results1', results1[0]);
+    try {
+        const [results1] = await connection.promise().query(query, [username, password], (err, results) => {
+            if (err) {
+                console.error('Error executing query:', err);
+                return null;
+            }
+            // if no results
+            if (results.length === 0) {
+                console.log('Login failed');
+                return null;
+            }
+            console.log('Login successful');
+        });
 
-    return results1[0];
+        await connection.promise().commit();
+
+        connection.end();
+
+        console.log('results1', results1[0]);
+
+        return results1[0];
+    } catch (error) {
+        console.error('Error executing query:', error);
+        await connection.promise().rollback();
+
+    }
+
 }
 
 async function changePassword(username, password) {
@@ -124,7 +137,7 @@ async function changePassword(username, password) {
     return 1;
 }
 
-async function deleteUser(username) {
+async function deleteUser(userID) {
     const connection = mysql.createConnection({
         host: config.database.host,
         user: config.database.user,
@@ -139,23 +152,37 @@ async function deleteUser(username) {
             return 0;
         }
         console.log('Connected to database');
-    }
-    );
-
-    // const query = `DELETE FROM User WHERE Username = ?`;
-
-    const query = `CALL deleteUser(?)`;
-    const [results] = await connection.promise().query(query, [username], (err, results) => {
-        if (err) {
-            console.error('Error executing query:', err);
-            return null;
-        }
-        console.log('User deleted successfully');
     });
 
-    connection.end();
+    try {
 
-    return 1;
+
+        const deleteProductReviewsQuery = `DELETE FROM Review WHERE ProductID IN (SELECT ID FROM Product WHERE CreatorID = ?);`;
+        await connection.promise().query(deleteProductReviewsQuery, [userID]);
+
+        const deleteProductsQuery = `DELETE FROM Product WHERE CreatorID = ?;`;
+        await connection.promise().query(deleteProductsQuery, [userID]);
+
+        const deleteReviewsQuery = `DELETE FROM Review WHERE UserID = ?;`;
+        await connection.promise().query(deleteReviewsQuery, [userID]);
+
+        const deleteOrdersQuery = `DELETE FROM Orders WHERE BuyerID = ?;`;
+        await connection.promise().query(deleteOrdersQuery, [userID]);
+
+        console.log('userID', userID);
+
+        const deleteUserQuery = `call deleteUser(?);`;
+        const [results] = await connection.promise().query(deleteUserQuery, [userID]);
+        console.log('results', results);
+
+        console.log('User and related data deleted successfully');
+        return 1;
+    } catch (error) {
+        console.error('Error executing query:', error);
+        return 0;
+    } finally {
+        connection.end();
+    }
 }
 
 

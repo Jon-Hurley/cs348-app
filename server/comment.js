@@ -1,4 +1,5 @@
 const mysql = require('mysql2');
+const config = require('../client/src/config.js');
 
 async function createComment(userID, productID, rating, description) {
 

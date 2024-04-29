@@ -86,7 +86,7 @@ const OrdersPage = () => {
               </thead>
               <tbody>
                 {orders.map(order => (
-                  <tr key={order.product}>
+                  <tr key={order.ID}>
                     <td>
                       {/* Button for each product */}
                       <button onClick={() => navigateToProduct(order.ID)}>
@@ -111,7 +111,7 @@ const OrdersPage = () => {
               </thead>
               <tbody>
                 {aggregateOrders.map(order => (
-                  <tr key={order.product}>
+                  <tr key={order.ID}>
                     <td>
                       {/* Button for each product */}
                       <button onClick={() => navigateToProduct(order.ID)}>

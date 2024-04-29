@@ -58,8 +58,9 @@ app.post('/changePassword', jsonParser, async function (req, res) {
 );
 
 app.post('/deleteUser', jsonParser, async function (req, res) {
-    const { username } = req.body;
-    results = await handleUser.deleteUser(username);
+    const { userID } = req.body;
+    console.log('userID in index:', userID);
+    results = await handleUser.deleteUser(userID);
     console.log(results);
     if (results == 0) {
         res.send({ message: 'Error deleting user' });
