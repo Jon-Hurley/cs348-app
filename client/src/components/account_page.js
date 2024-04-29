@@ -45,8 +45,6 @@ const AccountPage = () => {
   const handleUpdatePassword = () => {
     // Call the onUpdatePassword function passed as a prop
     // Reset the newPassword state
-    // Assuming the changePassword function is available in the AuthContext
-    // Reset the newPassword state
     axios.post('http://localhost:8080/changePassword', {
         username: username,
         password: newPassword
@@ -87,7 +85,7 @@ const AccountPage = () => {
       </div>
       <div>
         <button onClick={handleDeleteAccount}>Delete Account</button>
-        <button onClick={handleLogout}>Logout</button> {/* Use logout function from context */}
+        <button onClick={handleLogout}>Logout</button>
       </div>
       <div>
         <input

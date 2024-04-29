@@ -39,9 +39,6 @@ const ProductPage = () => {
   };
 
   const handlePurchase = () => {
-    // Add your logic for handling the purchase here
-    // For example, you can create an order or navigate to a checkout page
-    // navigate('/checkout'); // Example navigation
     axios.post('http://localhost:8080/createOrder', {
       productID: productID,
       userID: userID

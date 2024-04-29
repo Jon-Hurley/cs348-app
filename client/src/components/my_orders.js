@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from './auth_context';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom'; 
 
 const OrdersPage = () => {
   const { userID } = useContext(AuthContext);
-  const navigate = useNavigate(); // Get the navigate function
+  const navigate = useNavigate(); 
 
   console.log('UserID at start:', userID);
   const [orders, setOrders] = useState([]);
@@ -88,7 +88,6 @@ const OrdersPage = () => {
                 {orders.map(order => (
                   <tr key={order.ID}>
                     <td>
-                      {/* Button for each product */}
                       <button onClick={() => navigateToProduct(order.ID)}>
                         {order.product}
                       </button>
@@ -113,7 +112,6 @@ const OrdersPage = () => {
                 {aggregateOrders.map(order => (
                   <tr key={order.ID}>
                     <td>
-                      {/* Button for each product */}
                       <button onClick={() => navigateToProduct(order.ID)}>
                         {order.product}
                       </button>
@@ -129,7 +127,6 @@ const OrdersPage = () => {
           )}
         </div>
       )}
-      {/* Button to navigate to the shop */}
       <button onClick={navigateToShop}>Go to Shop</button>
     </div>
   );

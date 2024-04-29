@@ -12,7 +12,7 @@ const CreateAccount = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isCreator, setIsCreator] = useState(false);
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext); // Get login function from AuthContext
+  const { login } = useContext(AuthContext);
 
   const handleCreateAccount = (e) => {
     e.preventDefault();
@@ -30,7 +30,7 @@ const CreateAccount = () => {
       console.log('res in create account', res);
       if (res.data.message === 'User created') {
         // Log in the user after account creation
-        login(res.data.ID, username, password); // Utilize the login function from AuthContext
+        login(res.data.ID, username, password); 
         // Navigate to the account page
         navigate('/account');
       } else {

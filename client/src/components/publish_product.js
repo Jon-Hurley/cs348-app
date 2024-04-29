@@ -5,7 +5,7 @@ import { AuthContext } from './auth_context.js';
 import { useNavigate } from 'react-router-dom';
 
 const PublishProductPage = () => {
-  const { userID } = useContext(AuthContext); // Get userID from AuthContext
+  const { userID } = useContext(AuthContext); 
   console.log('userID in publish_product:', userID);
   const navigate = useNavigate();
   const [productData, setProductData] = useState({

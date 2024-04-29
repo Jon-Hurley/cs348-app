@@ -20,10 +20,10 @@ const ProductsPage = () => {
     try {
       console.log('Filtering products:', productNameFilter, creatorUsernameFilter);
       const response = await axios.post('http://localhost:8080/getAllProducts', {
-        productName: productNameFilter, // Send the product name filter to the backend
-        creatorUsername: creatorUsernameFilter, // Send the creator username filter to the backend
-        sortOption: sortOption, // Send the sorting option to the backend
-        sortOrder: sortOrder // Send the sorting order to the backend
+        productName: productNameFilter, 
+        creatorUsername: creatorUsernameFilter, 
+        sortOption: sortOption,
+        sortOrder: sortOrder
       });
       setProducts(response.data);
     } catch (error) {

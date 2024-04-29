@@ -6,7 +6,7 @@ import axios from 'axios';
 // Create the AuthContext
 export const AuthContext = createContext();
 
-// Custom hook to access the authentication context
+// Hook to access the authentication context
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
@@ -17,8 +17,6 @@ export const AuthProvider = ({ children }) => {
   // Function to handle login
   const login = async (ID, username, isCreator) => {
     try {
-    //   const response = await axios.post('http://localhost:8080/login', { username: username, password: password });
-    //   const userData = response.data;
       setUserID(ID);
       setUsername(username);
       setIsCreator(isCreator);

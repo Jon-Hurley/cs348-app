@@ -2,13 +2,13 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from './auth_context'; // Import the useAuth hook
+import { useAuth } from './auth_context';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
-  const { login } = useAuth(); // Access the login function from the AuthContext
+  const { login } = useAuth(); 
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -20,7 +20,7 @@ const Login = () => {
       const userData = response.data;
       if (userData.message === 'Logged in') {
         console.log('Logged in:', userData);
-        login(userData.ID, userData.username, userData.isCreator); // Set the logged-in user using the login function from the AuthContext
+        login(userData.ID, userData.username, userData.isCreator); 
         navigate('/account'); // Redirect to the account page
       } else {
         alert('Invalid username or password');
