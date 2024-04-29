@@ -15,15 +15,17 @@ It should be in the format:
 
 const config = {
     database: {
-      host: '<your host>',
-      port: <your port>,
-      user: '<your user>',
-      password: '<your password>',
-      database: '<your database name>'
+      host: 'your host',
+      port: your port,
+      user: 'your user',
+      password: 'your password',
+      database: 'your database name'
     }
   };
   
   module.exports = config;
+
+  // end config.js
 
 The indexes are commented out in my code because using IF NOT EXISTS throws an error and 
 my code says they are duplicates without that and stops running. Therefore, I created them the first
